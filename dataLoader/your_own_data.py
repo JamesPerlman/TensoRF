@@ -1,3 +1,4 @@
+from pathlib import Path
 import torch,cv2
 from torch.utils.data import Dataset
 import json
@@ -6,13 +7,16 @@ import os
 from PIL import Image
 from torchvision import transforms as T
 
+from dataLoader.tankstemple import circle, gen_path
+
 
 from .ray_utils import *
 
 
 class YourOwnDataset(Dataset):
     def __init__(self, datadir, split='train', downsample=1.0, is_stack=False, N_vis=-1):
-
+        
+        self.project_path = Path(datadir)
         self.N_vis = N_vis
         self.root_dir = datadir
         self.split = split
@@ -20,7 +24,7 @@ class YourOwnDataset(Dataset):
         self.downsample = downsample
         self.define_transforms()
 
-        self.scene_bbox = torch.tensor([[-1.5, -1.5, -1.5], [1.5, 1.5, 1.5]])
+        self.scene_bbox = torch.tensor([[-15.0, -15.0, -15.0], [15.0, 15.0, 15.0]])
         self.blender2opencv = np.array([[1, 0, 0, 0], [0, -1, 0, 0], [0, 0, -1, 0], [0, 0, 0, 1]])
         self.read_meta()
         self.define_proj_mat()
@@ -70,9 +74,11 @@ class YourOwnDataset(Dataset):
             c2w = torch.FloatTensor(pose)
             self.poses += [c2w]
 
-            image_path = os.path.join(self.root_dir, f"{frame['file_path']}.png")
+            image_path = frame['file_path']
             self.image_paths += [image_path]
-            img = Image.open(image_path)
+            
+            im_path = self.project_path / frame['file_path']
+            img = Image.open(im_path)
             
             if self.downsample!=1.0:
                 img = img.resize(self.img_wh, Image.LANCZOS)
@@ -88,6 +94,14 @@ class YourOwnDataset(Dataset):
 
 
         self.poses = torch.stack(self.poses)
+        
+        center = torch.mean(self.scene_bbox, dim=0)
+        radius = torch.norm(self.scene_bbox[1]-center)*1.2
+        up = torch.mean(self.poses[:, :3, 1], dim=0).tolist()
+        pos_gen = circle(radius=radius, h=-0.2*up[1], axis='y')
+        self.render_path = gen_path(pos_gen, up=up,frames=200)
+        self.render_path[:, :3, 3] += center
+
         if not self.is_stack:
             self.all_rays = torch.cat(self.all_rays, 0)  # (len(self.meta['frames])*h*w, 3)
             self.all_rgbs = torch.cat(self.all_rgbs, 0)  # (len(self.meta['frames])*h*w, 3)

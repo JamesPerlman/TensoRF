@@ -50,9 +50,9 @@ def config_parser(cmd=None):
                         help='loss weight')
     parser.add_argument("--Ortho_weight", type=float, default=0.0,
                         help='loss weight')
-    parser.add_argument("--TV_weight_density", type=float, default=0.0,
+    parser.add_argument("--TV_weight_density", type=float, default=0.1,
                         help='loss weight')
-    parser.add_argument("--TV_weight_app", type=float, default=0.0,
+    parser.add_argument("--TV_weight_app", type=float, default=0.01,
                         help='loss weight')
     
     # model
@@ -61,9 +61,9 @@ def config_parser(cmd=None):
     parser.add_argument("--n_lamb_sh", type=int, action="append")
     parser.add_argument("--data_dim_color", type=int, default=27)
 
-    parser.add_argument("--rm_weight_mask_thre", type=float, default=0.0001,
+    parser.add_argument("--rm_weight_mask_thresh", type=float, default=0.0001,
                         help='mask points in ray marching')
-    parser.add_argument("--alpha_mask_thre", type=float, default=0.0001,
+    parser.add_argument("--alpha_mask_thresh", type=float, default=0.0001,
                         help='threshold for creating alpha mask volume')
     parser.add_argument("--distance_scale", type=float, default=25,
                         help='scaling sampling distance for computation')
@@ -71,7 +71,7 @@ def config_parser(cmd=None):
                         help='shift density in softplus; making density = 0  when feature == 0')
                         
     # network decoder
-    parser.add_argument("--shadingMode", type=str, default="MLP_PE",
+    parser.add_argument("--shading_mode", type=str, default="MLP_PE",
                         help='which shading mode to use')
     parser.add_argument("--pos_pe", type=int, default=6,
                         help='number of pe for pos')
@@ -99,7 +99,7 @@ def config_parser(cmd=None):
                         help='set to 0. for no jitter, 1. for jitter')
     parser.add_argument("--accumulate_decay", type=float, default=0.998)
     parser.add_argument("--fea2denseAct", type=str, default='softplus')
-    parser.add_argument('--ndc_ray', type=int, default=0)
+    parser.add_argument('--ndc_ray', type=int, default=0) # ndc = normalized device coordinates
     parser.add_argument('--nSamples', type=int, default=1e6,
                         help='sample point each ray, pass 1e6 if automatic adjust')
     parser.add_argument('--step_ratio',type=float,default=0.5)

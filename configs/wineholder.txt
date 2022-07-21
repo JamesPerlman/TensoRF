@@ -20,7 +20,7 @@ render_test = 1
 n_lamb_sigma = [16,16,16]
 n_lamb_sh = [48,48,48]
 
-shadingMode = MLP_Fea
+shading_mode = MLP_Fea
 fea2denseAct = softplus
 
 view_pe = 2

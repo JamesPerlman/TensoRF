@@ -38,7 +38,7 @@ we provide a few examples in the configuration folder, please note:
 
  `dataset_name`, choices = ['blender', 'llff', 'nsvf', 'tankstemple'];
 
- `shadingMode`, choices = ['MLP_Fea', 'SH'];
+ `shading_mode`, choices = ['MLP_Fea', 'SH'];
 
  `model_name`, choices = ['TensorVMSplit', 'TensorCP'], corresponding to the VM and CP decomposition. 
  You need to uncomment the last a few rows of the configuration file if you want to training with the TensorCP model；

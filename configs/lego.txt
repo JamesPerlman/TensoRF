@@ -13,7 +13,7 @@ upsamp_list = [2000,3000,4000,5500,7000]
 update_AlphaMask_list = [2000,4000]
 
 N_vis = 5
-vis_every = 10000
+vis_every = 1000
 
 render_test = 1
 
@@ -22,7 +22,7 @@ n_lamb_sh = [48,48,48]
 model_name = TensorVMSplit
 
 
-shadingMode = MLP_Fea
+shading_mode = MLP_Fea
 fea2denseAct = softplus
 
 view_pe = 2
