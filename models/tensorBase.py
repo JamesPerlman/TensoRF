@@ -144,7 +144,7 @@ class TensorBase(torch.nn.Module):
             density_n_comp=8,
             appearance_n_comp=24,
             app_dim=27,
-            shading_mode='MLP_PE',
+            shading_mode='MLP_Fea',
             alphaMask=None,
             near_far=[2.0,6.0],
             density_shift=-10,
