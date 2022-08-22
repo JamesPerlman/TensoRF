@@ -22,6 +22,8 @@ def read_json(path: Path):
 
 class NeRFProject(Dataset):
     def __init__(self, project_path: Path):
+
+        self.project_path = project_path
         transforms_json_path = project_path / "transforms.json"
 
         self.transform = T.ToTensor()
@@ -98,3 +100,8 @@ class NeRFProject(Dataset):
             'rays': self.all_rays[idx],
             'rgbs': self.all_rgbs[idx]
         }
+    
+
+    def get_checkpoint_path(self, n_iters: int) -> Path:
+        checkpoints_path = self.project_path / "checkpoints" / "tensorf"
+        return checkpoints_path / f"ckpt-{n_iters}.th"
