@@ -20,10 +20,15 @@ def parse_args():
     parser = ArgumentParser()
 
     # basic
-    parser.add_argument("--project", type=str, required=True, help="Path to project.")
-    parser.add_argument("--max_iters", type=int, default=10000, help="Number of iterations to train.")
-    parser.add_argument("--checkpoint", type=str, help="Path to a checkpoint to load and start training from.")
-    parser.add_argument("--output", type=str, default=None, help="Output file path (will be set automatically if None).")
+    parser.add_argument("--project", type=str, required=True,
+        help="Path to project.")
+    
+    parser.add_argument("--max_iters", type=int, default=10000,
+        help="Number of iterations to train.")
+    
+    parser.add_argument("--checkpoint", type=str,
+        help="Either a number (program will attempt to load matching checkpoint file from project structure), or a path to a checkpoint file to load and start training from.")
+    # parser.add_argument("--output", type=str, default=None, help="Output file path (will be set automatically if None).")
     parser.add_argument("--save_every", type=int, default=10000, help="Save a checkpoint for every n iterations.")
 
     # advanced
@@ -134,16 +139,12 @@ class SimpleSampler:
             self.curr = 0
         return self.ids[self.curr:self.curr+self.batch]
 
-def get_checkpoint_path(project_path: Path, n_iters: int) -> Path:
-    checkpoints_path = project_path / "checkpoints"
-    return checkpoints_path / f"ckpt-{n_iters}.terf.th"
-
 def reconstruction(args):
     project_path = Path(args.project)
 
     dataset = NeRFProject(project_path)
 
-    get_checkpoint_path(project_path, 0).parent.mkdir(exist_ok=True)
+    dataset.get_checkpoint_path(0).parent.mkdir(exist_ok=True, parents=True)
     
     white_bg = dataset.white_bg
     near_far = dataset.near_far
@@ -166,7 +167,7 @@ def reconstruction(args):
         print(f"LOADING CHECKPOINT {args.checkpoint}")
         checkpoint_path: Path
         try:
-            checkpoint_path = get_checkpoint_path(project_path, int(args.checkpoint))
+            checkpoint_path = dataset.get_checkpoint_path(int(args.checkpoint))
 
         except:
             pass
@@ -346,9 +347,9 @@ def reconstruction(args):
             optimizer = torch.optim.Adam(grad_vars, betas=(0.9, 0.99))
         
         if iteration > 0 and iteration % args.save_every == 0:
-            tensorf.save(get_checkpoint_path(project_path, iteration))
+            tensorf.save(dataset.get_checkpoint_path(iteration))
         
-    final_checkpoint_path = get_checkpoint_path(project_path, args.max_iters)
+    final_checkpoint_path = dataset.get_checkpoint_path(args.max_iters)
     if not final_checkpoint_path.exists():
         tensorf.save(final_checkpoint_path)
 
