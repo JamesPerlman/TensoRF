@@ -100,8 +100,8 @@ def evaluation_path(
     
     W = int(render_data["w"])
     H = int(render_data["h"])
-    focal_x = render_data["f1_x"]
-    focal_y = render_data["f1_y"]
+    focal_x = render_data["fl_x"]
+    focal_y = render_data["fl_y"]
     cx = render_data["cx"]
     cy = render_data["cy"]
 
